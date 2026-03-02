@@ -19,7 +19,6 @@ class RegisterRequest(BaseModel):
     password: str = Field(min_length=8)
     full_name: str = Field(min_length=2, max_length=255)
     phone: Optional[str] = None
-    role: str = Field(default="patient", pattern="^(admin|doctor|receptionist|patient)$")
 
 
 class TokenResponse(BaseModel):

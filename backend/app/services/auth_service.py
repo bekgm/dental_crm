@@ -31,7 +31,7 @@ class AuthService:
             hashed_password=hash_password(data.password),
             full_name=data.full_name,
             phone=data.phone,
-            role=data.role,
+            role="patient",
         )
 
         return TokenResponse(
