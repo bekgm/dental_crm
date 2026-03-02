@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Query
 
 from app.core.deps import CurrentUser, DBSession, require_receptionist
 from app.core.exceptions import ForbiddenException
+from app.models.user import User
 from app.schemas.common import MessageResponse, PaginatedResponse
 from app.schemas.invoice import InvoiceCreate, InvoiceRead, InvoiceUpdate
 from app.services.invoice_service import InvoiceService
@@ -70,7 +71,7 @@ async def get_invoice(
 async def create_invoice(
     data: InvoiceCreate,
     session: DBSession,
-    _staff: CurrentUser = Depends(require_receptionist),
+    _staff: User = Depends(require_receptionist),
 ):
     svc = InvoiceService(session)
     invoice = await svc.create_invoice(data)
@@ -82,7 +83,7 @@ async def update_invoice(
     invoice_id: str,
     data: InvoiceUpdate,
     session: DBSession,
-    _staff: CurrentUser = Depends(require_receptionist),
+    _staff: User = Depends(require_receptionist),
 ):
     svc = InvoiceService(session)
     invoice = await svc.update_invoice(invoice_id, data)
@@ -93,7 +94,7 @@ async def update_invoice(
 async def delete_invoice(
     invoice_id: str,
     session: DBSession,
-    _staff: CurrentUser = Depends(require_receptionist),
+    _staff: User = Depends(require_receptionist),
 ):
     svc = InvoiceService(session)
     await svc.delete_invoice(invoice_id)

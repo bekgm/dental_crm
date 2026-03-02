@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Query
 
 from app.core.deps import CurrentUser, DBSession, require_admin
+from app.models.user import User
 from app.schemas.common import MessageResponse, PaginatedResponse
 from app.schemas.doctor import DoctorCreate, DoctorRead, DoctorUpdate
 from app.services.doctor_service import DoctorService
@@ -45,7 +46,7 @@ async def get_doctor(
 async def create_doctor(
     data: DoctorCreate,
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
 ):
     svc = DoctorService(session)
     doctor = await svc.create_doctor(data)
@@ -76,7 +77,7 @@ async def update_doctor(
 async def delete_doctor(
     doctor_id: str,
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
 ):
     svc = DoctorService(session)
     await svc.delete_doctor(doctor_id)

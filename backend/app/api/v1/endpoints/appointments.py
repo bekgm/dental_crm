@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Query
 
 from app.core.deps import CurrentUser, DBSession, require_staff
 from app.core.exceptions import ForbiddenException
+from app.models.user import User
 from app.schemas.appointment import AppointmentCreate, AppointmentRead, AppointmentUpdate
 from app.schemas.common import MessageResponse, PaginatedResponse
 from app.services.appointment_service import AppointmentService
@@ -123,7 +124,7 @@ async def update_appointment(
 async def delete_appointment(
     appointment_id: str,
     session: DBSession,
-    _staff: CurrentUser = Depends(require_staff),
+    _staff: User = Depends(require_staff),
 ):
     svc = AppointmentService(session)
     await svc.delete_appointment(appointment_id)

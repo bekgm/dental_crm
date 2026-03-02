@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Query
 
 from app.core.deps import CurrentUser, DBSession, require_admin
+from app.models.user import User
 from app.schemas.common import MessageResponse, PaginatedResponse
 from app.schemas.service import ServiceCreate, ServiceRead, ServiceUpdate
 from app.services.service_catalog_service import ServiceCatalogService
@@ -48,7 +49,7 @@ async def get_service(
 async def create_service(
     data: ServiceCreate,
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
 ):
     svc = ServiceCatalogService(session)
     return await svc.create_service(data)
@@ -59,7 +60,7 @@ async def update_service(
     service_id: str,
     data: ServiceUpdate,
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
 ):
     svc = ServiceCatalogService(session)
     return await svc.update_service(service_id, data)
@@ -69,7 +70,7 @@ async def update_service(
 async def delete_service(
     service_id: str,
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
 ):
     svc = ServiceCatalogService(session)
     await svc.delete_service(service_id)

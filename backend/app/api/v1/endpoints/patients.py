@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Query
 
 from app.core.deps import CurrentUser, DBSession, require_staff
+from app.models.user import User
 from app.schemas.common import MessageResponse, PaginatedResponse
 from app.schemas.patient import PatientCreate, PatientRead, PatientUpdate
 from app.services.patient_service import PatientService
@@ -63,7 +64,7 @@ async def get_patient(
 async def create_patient(
     data: PatientCreate,
     session: DBSession,
-    _staff: CurrentUser = Depends(require_staff),
+    _staff: User = Depends(require_staff),
 ):
     svc = PatientService(session)
     patient = await svc.create_patient(data)
@@ -94,7 +95,7 @@ async def update_patient(
 async def delete_patient(
     patient_id: str,
     session: DBSession,
-    _staff: CurrentUser = Depends(require_staff),
+    _staff: User = Depends(require_staff),
 ):
     svc = PatientService(session)
     await svc.delete_patient(patient_id)

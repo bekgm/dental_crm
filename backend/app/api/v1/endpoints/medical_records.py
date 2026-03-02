@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Query
 
 from app.core.deps import CurrentUser, DBSession, require_doctor
 from app.core.exceptions import ForbiddenException
+from app.models.user import User
 from app.schemas.common import MessageResponse, PaginatedResponse
 from app.schemas.medical_record import (
     MedicalRecordCreate,
@@ -86,7 +87,7 @@ async def get_medical_record(
 async def create_medical_record(
     data: MedicalRecordCreate,
     session: DBSession,
-    current_user: CurrentUser = Depends(require_doctor),
+    current_user: User = Depends(require_doctor),
 ):
     # Only doctors/admins can create records
     if current_user.role == "doctor":
@@ -105,7 +106,7 @@ async def update_medical_record(
     record_id: str,
     data: MedicalRecordUpdate,
     session: DBSession,
-    current_user: CurrentUser = Depends(require_doctor),
+    current_user: User = Depends(require_doctor),
 ):
     svc = MedicalRecordService(session)
     record = await svc.get_record(record_id)
@@ -124,7 +125,7 @@ async def update_medical_record(
 async def delete_medical_record(
     record_id: str,
     session: DBSession,
-    current_user: CurrentUser = Depends(require_doctor),
+    current_user: User = Depends(require_doctor),
 ):
     svc = MedicalRecordService(session)
     await svc.delete_record(record_id)

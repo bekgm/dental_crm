@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
 
-from app.core.deps import CurrentUser, DBSession, require_admin
+from app.core.deps import DBSession, require_admin
+from app.models.user import User
 from app.schemas.auth import UserCreate, UserRead, UserUpdate
 from app.schemas.common import MessageResponse, PaginatedResponse
 from app.services.user_service import UserService
@@ -15,7 +16,7 @@ router = APIRouter()
 @router.get("", response_model=PaginatedResponse[UserRead])
 async def list_users(
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=100),
     sort_by: str | None = None,
@@ -40,7 +41,7 @@ async def list_users(
 async def get_user(
     user_id: str,
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
 ):
     service = UserService(session)
     return await service.get_user(user_id)
@@ -50,7 +51,7 @@ async def get_user(
 async def create_user(
     data: UserCreate,
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
 ):
     service = UserService(session)
     return await service.create_user(data)
@@ -61,7 +62,7 @@ async def update_user(
     user_id: str,
     data: UserUpdate,
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
 ):
     service = UserService(session)
     return await service.update_user(user_id, data)
@@ -71,7 +72,7 @@ async def update_user(
 async def delete_user(
     user_id: str,
     session: DBSession,
-    _admin: CurrentUser = Depends(require_admin),
+    _admin: User = Depends(require_admin),
 ):
     service = UserService(session)
     await service.delete_user(user_id)
