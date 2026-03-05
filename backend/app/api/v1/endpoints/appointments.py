@@ -89,7 +89,7 @@ async def create_appointment(
         pat = await psvc.get_patient_by_user_id(current_user.id)
         if data.patient_id != pat.id:
             raise ForbiddenException("You can only book for yourself")
-    elif current_user.role not in ("admin", "receptionist"):
+    elif current_user.role not in ("admin", "receptionist", "doctor"):
         raise ForbiddenException()
 
     svc = AppointmentService(session)

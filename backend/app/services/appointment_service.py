@@ -58,7 +58,8 @@ class AppointmentService:
             raise NotFoundException("Patient")
         if not await self.doctor_repo.get_by_id(data.doctor_id):
             raise NotFoundException("Doctor")
-        if data.scheduled_at < datetime.now(timezone.utc):
+        scheduled = data.scheduled_at if data.scheduled_at.tzinfo else data.scheduled_at.replace(tzinfo=timezone.utc)
+        if scheduled < datetime.now(timezone.utc):
             raise BadRequestException("Cannot schedule appointment in the past")
 
         return await self.repo.create(**data.model_dump())
