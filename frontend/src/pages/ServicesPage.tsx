@@ -129,10 +129,13 @@ export default function ServicesPage() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">Services</Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={{ xs: 2, sm: 3 }} flexWrap="wrap" gap={1}>
+        <Box>
+          <Typography variant="h4" fontWeight={800} sx={{ fontSize: { xs: '1.3rem', sm: '1.75rem' } }}>Services</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', sm: 'block' } }}>Dental service catalog</Typography>
+        </Box>
         {isAdmin && (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 3, px: { xs: 2, sm: 3 }, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
             New Service
           </Button>
         )}
@@ -141,7 +144,7 @@ export default function ServicesPage() {
       {loading ? (
         <Loading />
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={{ xs: 1.5, sm: 2 }}>
           {services.map((svc) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={svc.id}>
               <Card sx={{ height: '100%', opacity: svc.is_active ? 1 : 0.6 }}>

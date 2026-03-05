@@ -80,15 +80,27 @@ export default function ProfilePage() {
     .slice(0, 2);
 
   return (
-    <Box maxWidth={800} mx="auto">
-      <Typography variant="h4" mb={3}>
+    <Box maxWidth={800} mx="auto" px={{ xs: 0, sm: 0 }}>
+      <Typography variant="h4" fontWeight={800} mb={0.5} sx={{ fontSize: { xs: '1.3rem', sm: '1.75rem' } }}>
         My Profile
+      </Typography>
+      <Typography variant="body2" color="text.secondary" mb={{ xs: 2, sm: 3 }}>
+        Manage your account information
       </Typography>
 
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <Box display="flex" alignItems="center" gap={3} mb={3}>
-            <Avatar sx={{ width: 80, height: 80, fontSize: 32, bgcolor: 'primary.main' }}>
+          <Box display="flex" alignItems="center" gap={{ xs: 2, sm: 3 }} mb={3} flexDirection={{ xs: 'column', sm: 'row' }} textAlign={{ xs: 'center', sm: 'left' }}>
+            <Avatar
+              sx={{
+                width: { xs: 64, sm: 80 },
+                height: { xs: 64, sm: 80 },
+                fontSize: { xs: 24, sm: 32 },
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #6C63FF 0%, #00D9A6 100%)',
+                boxShadow: '0 8px 24px rgba(108,99,255,0.3)',
+              }}
+            >
               {initials || <PersonIcon fontSize="large" />}
             </Avatar>
             <Box>
@@ -98,9 +110,14 @@ export default function ProfilePage() {
               </Typography>
               <Chip
                 label={user.role}
-                color="primary"
                 size="small"
-                sx={{ mt: 0.5, textTransform: 'capitalize' }}
+                sx={{
+                  mt: 0.5,
+                  textTransform: 'capitalize',
+                  fontWeight: 700,
+                  bgcolor: 'rgba(108,99,255,0.1)',
+                  color: '#6C63FF',
+                }}
               />
             </Box>
           </Box>

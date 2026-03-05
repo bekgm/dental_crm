@@ -1,12 +1,14 @@
 /** Dashboard page with charts and analytics. */
 
 import { useEffect, useState } from 'react';
-import { Box, Grid, Typography, Card, CardContent } from '@mui/material';
+import { Box, Grid, Typography, Card, CardContent, useMediaQuery, useTheme } from '@mui/material';
 import {
   People as PeopleIcon,
   CalendarMonth as CalendarIcon,
   AttachMoney as MoneyIcon,
   LocalHospital as DoctorIcon,
+  EventNote as UpcomingIcon,
+  ReceiptLong as PendingIcon,
 } from '@mui/icons-material';
 import {
   BarChart,
@@ -26,11 +28,13 @@ import Loading from '@/components/Loading';
 import { dashboardApi } from '@/api/services';
 import type { DashboardData } from '@/types';
 
-const PIE_COLORS = ['#1565C0', '#42A5F5', '#388E3C', '#D32F2F', '#F57C00'];
+const PIE_COLORS = ['#6C63FF', '#00D9A6', '#928DFF', '#FF5C5C', '#FFB547'];
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const isPhone = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     dashboardApi
@@ -54,61 +58,53 @@ export default function DashboardPage() {
 
   return (
     <Box>
-      <Typography variant="h4" mb={3}>
+      <Typography variant="h4" fontWeight={800} mb={0.5} sx={{ fontSize: { xs: '1.4rem', sm: '1.75rem' } }}>
         Dashboard
+      </Typography>
+      <Typography variant="body1" color="text.secondary" mb={{ xs: 2, sm: 3 }} sx={{ fontSize: { xs: '0.85rem', sm: '1rem' } }}>
+        Overview of your dental practice
       </Typography>
 
       {/* Stat Cards */}
-      <Grid container spacing={3} mb={4}>
+      <Grid container spacing={{ xs: 1.5, sm: 3 }} mb={{ xs: 2, sm: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Total Patients"
-            value={data.total_patients}
-            icon={PeopleIcon}
-            color="#1565C0"
-          />
+          <StatCard title="Total Patients" value={data.total_patients} icon={PeopleIcon} color="#6C63FF" />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Total Doctors"
-            value={data.total_doctors}
-            icon={DoctorIcon}
-            color="#00897B"
-          />
+          <StatCard title="Total Doctors" value={data.total_doctors} icon={DoctorIcon} color="#00D9A6" />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Appointments"
-            value={data.total_appointments}
-            icon={CalendarIcon}
-            color="#F57C00"
-          />
+          <StatCard title="Appointments" value={data.total_appointments} icon={CalendarIcon} color="#FFB547" />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Total Revenue"
-            value={`$${data.total_revenue.toLocaleString()}`}
-            icon={MoneyIcon}
-            color="#388E3C"
-          />
+          <StatCard title="Total Revenue" value={`$${data.total_revenue.toLocaleString()}`} icon={MoneyIcon} color="#928DFF" />
         </Grid>
       </Grid>
 
       {/* Charts */}
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 1.5, sm: 3 }}>
         <Grid item xs={12} md={8}>
           <Card>
-            <CardContent>
-              <Typography variant="h6" mb={2}>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography variant="h6" fontWeight={700} mb={2} sx={{ fontSize: { xs: '0.95rem', sm: '1.05rem' } }}>
                 Monthly Revenue
               </Typography>
-              <ResponsiveContainer width="100%" height={320}>
+              <ResponsiveContainer width="100%" height={isPhone ? 220 : 320}>
                 <BarChart data={data.monthly_revenue}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} />
-                  <Bar dataKey="revenue" fill="#1565C0" radius={[6, 6, 0, 0]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E8EAF0" />
+                  <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    formatter={(value: number) => `$${value.toLocaleString()}`}
+                    contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
+                  />
+                  <Bar dataKey="revenue" fill="url(#barGradient)" radius={[8, 8, 0, 0]} />
+                  <defs>
+                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#6C63FF" />
+                      <stop offset="100%" stopColor="#928DFF" />
+                    </linearGradient>
+                  </defs>
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -116,30 +112,25 @@ export default function DashboardPage() {
         </Grid>
         <Grid item xs={12} md={4}>
           <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Typography variant="h6" mb={2}>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography variant="h6" fontWeight={700} mb={2} sx={{ fontSize: { xs: '0.95rem', sm: '1.05rem' } }}>
                 Appointment Status
               </Typography>
               {pieData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={280}>
+                <ResponsiveContainer width="100%" height={isPhone ? 220 : 280}>
                   <PieChart>
                     <Pie
                       data={pieData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={50}
+                      innerRadius={55}
                       outerRadius={90}
                       paddingAngle={4}
                       dataKey="value"
-                      label={({ name, percent }) =>
-                        `${name} ${(percent * 100).toFixed(0)}%`
-                      }
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                     >
                       {pieData.map((_entry, idx) => (
-                        <Cell
-                          key={`cell-${idx}`}
-                          fill={PIE_COLORS[idx % PIE_COLORS.length]}
-                        />
+                        <Cell key={`cell-${idx}`} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
                       ))}
                     </Pie>
                     <Legend />
@@ -156,26 +147,12 @@ export default function DashboardPage() {
       </Grid>
 
       {/* Quick Stats */}
-      <Grid container spacing={3} mt={1}>
+      <Grid container spacing={{ xs: 1.5, sm: 3 }} mt={{ xs: 0.5, sm: 1 }}>
         <Grid item xs={12} sm={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Upcoming Appointments</Typography>
-              <Typography variant="h3" color="primary" fontWeight={700}>
-                {data.upcoming_appointments}
-              </Typography>
-            </CardContent>
-          </Card>
+          <StatCard title="Upcoming Appointments" value={data.upcoming_appointments} icon={UpcomingIcon} color="#00D9A6" />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Pending Invoices</Typography>
-              <Typography variant="h3" color="warning.main" fontWeight={700}>
-                {data.pending_invoices}
-              </Typography>
-            </CardContent>
-          </Card>
+          <StatCard title="Pending Invoices" value={data.pending_invoices} icon={PendingIcon} color="#FFB547" />
         </Grid>
       </Grid>
     </Box>

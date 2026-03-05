@@ -105,13 +105,17 @@ export default function PatientsPage() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">Patients</Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={{ xs: 2, sm: 3 }} flexWrap="wrap" gap={1}>
+        <Box>
+          <Typography variant="h4" fontWeight={800} sx={{ fontSize: { xs: '1.3rem', sm: '1.75rem' } }}>Patients</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', sm: 'block' } }}>Manage your patient records</Typography>
+        </Box>
         {isStaff && (
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setDialogOpen(true)}
+            sx={{ borderRadius: 3, px: { xs: 2, sm: 3 }, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
           >
             Add Patient
           </Button>
@@ -125,7 +129,7 @@ export default function PatientsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           InputProps={{ startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} /> }}
-          sx={{ width: 300 }}
+          sx={{ width: { xs: '100%', sm: 300 } }}
         />
       </Box>
 
@@ -133,8 +137,8 @@ export default function PatientsPage() {
         <Loading />
       ) : (
         <Card>
-          <TableContainer>
-            <Table>
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: 600 }}>
               <TableHead>
                 <TableRow>
                   <TableCell>Name</TableCell>

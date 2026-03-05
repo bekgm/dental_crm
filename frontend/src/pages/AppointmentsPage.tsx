@@ -89,9 +89,14 @@ export default function AppointmentsPage() {
 
   const handleCreate = async () => {
     try {
-      await appointmentsApi.create(form);
+      const payload = {
+        ...form,
+        scheduled_at: form.scheduled_at ? new Date(form.scheduled_at).toISOString() : '',
+      };
+      await appointmentsApi.create(payload);
       addNotification('Appointment created', 'success');
       setDialogOpen(false);
+      setForm({ patient_id: '', doctor_id: '', scheduled_at: '', duration_minutes: 30, notes: '' });
       fetchAppointments();
     } catch {
       addNotification('Failed to create appointment', 'error');
@@ -126,10 +131,13 @@ export default function AppointmentsPage() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">Appointments</Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={{ xs: 2, sm: 3 }} flexWrap="wrap" gap={1}>
+        <Box>
+          <Typography variant="h4" fontWeight={800} sx={{ fontSize: { xs: '1.3rem', sm: '1.75rem' } }}>Appointments</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', sm: 'block' } }}>Schedule and manage appointments</Typography>
+        </Box>
         {(isStaff || isPatient) && (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)}>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)} sx={{ borderRadius: 3, px: { xs: 2, sm: 3 }, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
             New Appointment
           </Button>
         )}
@@ -142,7 +150,7 @@ export default function AppointmentsPage() {
           label="Status"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          sx={{ width: 200 }}
+          sx={{ width: { xs: '100%', sm: 200 } }}
         >
           <MenuItem value="">All</MenuItem>
           <MenuItem value="scheduled">Scheduled</MenuItem>
@@ -158,8 +166,8 @@ export default function AppointmentsPage() {
         <Loading />
       ) : (
         <Card>
-          <TableContainer>
-            <Table>
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: 700 }}>
               <TableHead>
                 <TableRow>
                   <TableCell>Date & Time</TableCell>
